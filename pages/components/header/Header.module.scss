@@ -1,0 +1,46 @@
+@import '../../../styles//variables.scss';
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 0.1px solid rgba(128, 128, 128, 0.096);
+    padding: 1.5rem 1rem;
+}
+
+.navlogo {
+    flex: 1;
+    display: flex;
+
+    h1 {
+        font-family: $big-font;
+        color: black;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+}
+
+.navlinks {
+    flex: 1;  
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;  
+
+    a {
+        color: black;
+        text-decoration: none;
+        font-family: $small-font;
+        margin: 0 1rem;
+        transition-property: all;
+        transition-duration: 0.2s;
+        border: solid transparent 1px;
+        border-radius: 5px;
+        padding: 0.3rem;
+    }
+    
+    a:hover {
+        color: lightseagreen;
+        border: solid lightseagreen 1px;
+    }
+
+}

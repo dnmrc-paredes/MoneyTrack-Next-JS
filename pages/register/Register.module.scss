@@ -1,0 +1,60 @@
+@import '../../styles/variables.scss';
+
+.container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    form {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: auto;
+        background-color: whitesmoke;
+        border-radius: 10px;
+        padding: 2rem;
+        width: 80%;
+        // box-shadow: 0 3px 3px rgba(0,0,0,0.16), 0 3px 3px rgba(0,0,0,0.23);
+
+        h1 {
+            font-family: $big-font;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+
+        input {
+            padding: 1rem;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+            margin: 0.3rem 0;
+            font-family: $small-font;
+        }
+
+        button {
+            margin-top: 1rem;
+            padding: 0.5rem 0;
+            // background-color: $primary;
+            border: $primary solid 1px;
+            font-family: $small-font;
+            color: $primary;
+            background-color: white;
+            transition-duration: 0.3s;
+            transition-property: all;
+            border-radius: 25px;
+            // border: none;
+            outline: none;
+            cursor: pointer;
+            width: 120px;
+        }
+
+        button:hover {
+            background-color: $secondary;
+            border: transparent solid 1px;
+            color: white;
+        }
+
+    }
+
+}
