@@ -27,7 +27,7 @@ const Root = () => {
 
           <div className={styles.introinfo}>
             <h1> Welcome to <span id={styles.logo}> MoneyTrack </span> </h1>
-            <p> A platform to track you expenses. </p>
+            <p> A platform where you can track your expenses. </p>
             <button onClick={toLogin} > Get started </button>
           </div>
 
