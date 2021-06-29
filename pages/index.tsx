@@ -1,14 +1,24 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import {useRouter} from 'next/router'
+import {useState, useEffect} from 'react'
 
 // Styles & Static Files
 import styles from '../styles/Home.module.scss'
 import familySaving from '../public/fam-couple-saving.jpg'
+import { useSelector } from 'react-redux'
+import { IrootState } from '../interfaces/rootState'
 
 const Root = () => {
 
   const router = useRouter()
+  const isAuth = useSelector((state: IrootState) => state.auth)
+
+  useEffect(() => {
+    if (isAuth) {
+      router.push('/home')
+    }
+  })
 
   const toLogin = () => {
     router.push('/login')

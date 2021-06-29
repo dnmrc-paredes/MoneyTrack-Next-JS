@@ -1,23 +1,7 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-
-// const connection = mysql.createConnection({
-//     host: 'localhost',
-//     user: 'root',
-//     password: 'samsungj2prime',
-//     database: 'moneytrack_db'
-// })
-
-// connection.connect()
-
-// connection.query('INSERT INTO users (first_name, last_name, email, password, money) VALUES ("dinmarc", "paredes", "admin@gmail.com", "admin", 500)')
-
 import type { NextApiRequest, NextApiResponse } from 'next'
 import mysql from 'mysql'
 import {compare} from 'bcrypt'
-
-// type Data = {
-//   name: string
-// }
+import {sign} from 'jsonwebtoken'
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -61,10 +45,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         
         if (isSame) {
 
+          // req.cookies = {
+          //   id: result[0].uniq_id
+          // }
+
+          const token = sign({id: result[0].uniq_id}, 'secret')
+          // req.headers.authorization = token
+          // console.log(req.headers.authorization)
+
+          // const token = cookies({req}).token = sign({id: result[0].uniq_id}, 'secret')
+          // console.log(token)
+
           return res.status(200).json({
             status: 'ok',
             msg: 'Successfully Logged In.',
-            data: result
+            data: result,
+            token
           })
 
         } else {

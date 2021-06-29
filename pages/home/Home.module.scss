@@ -1,0 +1,168 @@
+@import '../../styles/variables.scss';
+
+.main {
+    min-height: 90vh;
+}
+
+.container  {
+    display: flex;
+    flex-direction: column;
+
+    .addbtn {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem;
+
+        p {
+            font-family: $big-font;
+            margin: auto 0;
+        }
+        
+        button {
+            display: flex;
+            padding: 0.5rem;
+            background-color: rgb(45, 209, 45);
+            width: 60px;
+            border: none;
+            outline: none;
+            border-radius: 5px;
+            color: white;
+            font-family: $small-font;
+            cursor: pointer;
+            transition-property: all;
+            transition-duration: 0.2s;
+        }
+
+        button:hover {
+            background-color: rgb(20, 163, 20);
+        }
+
+    }
+}
+
+.rootform {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 13rem 0;
+
+
+    form {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        width: 30%;
+        background-color: whitesmoke;
+        border-radius: 5px;
+        padding: 2rem;
+
+        h1 {
+            font-family: $big-font;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        input {
+            padding: 0.5rem;
+            font-family: $small-font;
+            margin: 2px 0;
+            outline: none;
+            border-radius: 3px;
+            border: none;
+        }
+
+        .groupbtns {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-around;
+
+            button {
+                padding: 0.5rem;
+                font-family: $small-font;
+                background-color: rgb(45, 209, 45);
+                width: 45%;
+                border: none;
+                outline: none;
+                border-radius: 5px;
+                color: white;
+                cursor: pointer;
+                transition-property: all;
+                transition-duration: 0.2s;
+            }
+    
+            button:hover {
+                background-color: rgb(20, 163, 20);
+            }
+    
+            .cancel {
+                background-color: red;
+            }
+    
+            .cancel:hover {
+                background-color: rgb(194, 10, 10);
+            }
+        }
+
+    }
+}
+
+.itemsbox {
+    // background-color: red;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+
+    .items {
+        margin: 0.15rem 0;
+        padding: 0.7rem 1rem;
+        background-color: whitesmoke;
+        border-radius: 3px;
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+
+            h3, p {
+                font-family: $small-font;
+                font-weight: 500;
+                margin: auto 0;
+            }
+
+            p {
+                color: green;
+            }
+
+            .details {
+                flex: 1;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .btns {
+                flex: 1;
+                display: flex;
+                justify-content: flex-end;
+
+                button {
+                    padding: 0 0.5rem;
+                    margin: 0 0.2rem;
+                    background-color: lightskyblue;
+                    border: none;
+                    border-radius: 3px;
+                    outline: none;
+                    cursor: pointer;
+                    color: white;
+                    font-family: $small-font;
+                }
+
+                #edit {
+                    background-color: rgb(45, 209, 45);
+                }
+
+                #delete {
+                    background-color: red;
+                }
+            }
+        }
+    }
+}

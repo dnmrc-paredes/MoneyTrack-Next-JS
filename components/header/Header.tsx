@@ -19,8 +19,10 @@ export const Header = () => {
     }
 
     const logout = () => {
+        document.cookie = `token=`
         dispatch(userLogout())
         dispatch(unauthorized())
+        router.replace('/login')
     }
 
     return (

@@ -1,10 +1,9 @@
-import {useState, ChangeEvent, FormEvent} from 'react'
+import {useState, ChangeEvent, FormEvent, useEffect} from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import axios from 'axios'
 import {useRouter} from 'next/router'
-import {GetStaticPaths, GetStaticProps} from 'next'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 
 // Icons
 import { MdClose } from 'react-icons/md'
@@ -14,16 +13,24 @@ import styles from  './Login.module.scss'
 
 import moneyCalculatorImg from '../../public/Mar-Business_11.jpg'
 import { authorized, userLoggedIn } from '../../redux/actions/action'
+import { IrootState } from '../../interfaces/rootState'
 
 const Login = () => {
 
     const router = useRouter()
     const dispatch = useDispatch()
+    const isAuth = useSelector((state: IrootState) => state.auth)
     const [errors, setErrors] = useState([] as string[])
     const [login, setLogin] = useState({
         email: "" as string,
         password: "" as string
     })
+
+    useEffect(() => {
+        if (isAuth) {
+            router.push('/home')
+        }
+    },[isAuth,router])
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target
@@ -43,6 +50,7 @@ const Login = () => {
         }
 
         if (data.status === 'ok') {
+            document.cookie = `token=${data.token}`
             dispatch(userLoggedIn(data.data[0]))
             dispatch(authorized())
             router.push({pathname: 'home'})
