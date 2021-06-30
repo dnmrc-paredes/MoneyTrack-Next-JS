@@ -20,7 +20,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (req.method === 'POST') {
       
-
       if (!email || !password) {
         res.json({
           status: 'fail',
@@ -45,16 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         
         if (isSame) {
 
-          // req.cookies = {
-          //   id: result[0].uniq_id
-          // }
-
           const token = sign({id: result[0].uniq_id}, 'secret')
-          // req.headers.authorization = token
-          // console.log(req.headers.authorization)
-
-          // const token = cookies({req}).token = sign({id: result[0].uniq_id}, 'secret')
-          // console.log(token)
 
           return res.status(200).json({
             status: 'ok',

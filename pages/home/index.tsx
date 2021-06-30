@@ -1,26 +1,29 @@
 import Head from 'next/head'
+import React from 'react'
 import {useState, MouseEvent, MouseEventHandler, ChangeEvent} from 'react'
 import axios from 'axios'
 import {GetServerSideProps, NextPage} from 'next'
+import { FormEventHandler } from 'react'
+import { useSelector } from 'react-redux'
 import publicIp from 'public-ip'
 import geoip from 'geoip-country'
 import currency from 'country-to-currency'
 import getSymbolFromCurrency from 'currency-symbol-map'
+import {verify} from 'jsonwebtoken'
+import {useRouter} from 'next/router'
  
 // Styles & Static
 import { MdLibraryAdd } from 'react-icons/md'
 import styles from './Home.module.scss'
+import 'react-toastify/dist/ReactToastify.css';
 
 // Components
 import {ModalForm} from '../../layout/modalForm/modalForm'
-import { FormEventHandler } from 'react'
-import { useSelector } from 'react-redux'
-import { IrootState } from '../../interfaces/rootState'
-import {verify} from 'jsonwebtoken'
+import {ToastContainer, toast} from 'react-toastify'
 
 // Interface
 import {Iitem} from '../../interfaces/item'
-import React from 'react'
+import { IrootState } from '../../interfaces/rootState'
 
 export const getServerSideProps: GetServerSideProps = async ({req}) => {
     
@@ -57,7 +60,6 @@ export const getServerSideProps: GetServerSideProps = async ({req}) => {
         return prev+curr
     }, 0)
 
-
     return {
         props: {
             items: data.data,
@@ -69,12 +71,28 @@ export const getServerSideProps: GetServerSideProps = async ({req}) => {
 
 const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number}> = ({items, symbol, totalAmount}) => {
 
+    const router = useRouter()
     const myID = useSelector((state: IrootState) => state.user.uniq_id)
-    const [modalState, setModalState] = useState<boolean>(false)
+    const [createState, setCreateState] = useState<boolean>(false)
+    const [editState, setEditState] = useState<boolean>(false)
     const [details, setDetails] = useState({
         description: "" as string,
-        amount: "" as string
+        amount: 0 as number
     })
+
+    // Edit State
+    const [selectedItem, setSelectedItem] = useState("")
+    const [selectedDetails, setSelectedDetails] = useState({
+        description: "",
+        amount: 0 as number
+    })
+
+    // Toasts Notifications
+    const notifyError = () => toast.warn('All inputs required')
+    const notifyError2 = () => toast.warn('Must be a number')
+    const notifyAdded = () => toast.success('Successfully Added')
+    const notifyEdited = () => toast.success('Successfully Edited')
+    const notifyDeleted = () => toast.info('Successfully Deleted')
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const {value, name} = e.target
@@ -85,21 +103,78 @@ const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number}> = ({
         })
     }
 
+    const handleChange2 = (e: ChangeEvent<HTMLInputElement>) => {
+        const {value, name} = e.target
+
+        setSelectedDetails({
+            ...selectedDetails,
+            [name]: value
+        })
+    }
+
     const submitForm: FormEventHandler = async (e) => {
         e.preventDefault()
         const {data} = await axios.post(`/api/addexpense/${myID}`, details)
+
+        if (!details.description || !details.amount) {
+            return notifyError()
+        }
+
+        if (isNaN(details.amount)) {
+            return notifyError2()
+        }
         
         if (data.status === "ok") {
-            return setModalState(!modalState)
+            notifyAdded()
+            refreshData()
+            return setCreateState(!createState)
+        }
+    }
+
+    const submitEdit: FormEventHandler = async (e) => {
+        e.preventDefault()
+        const {data} = await axios.patch(`/api/editexpense/${selectedItem}`, selectedDetails)
+
+        if (!selectedDetails.description || !selectedDetails.amount) {
+            return notifyError()
+        }
+
+        if (isNaN(selectedDetails.amount)) {
+            return notifyError2()
+        }
+        
+        if (data.status === "ok") {
+            notifyEdited()
+            refreshData()
+            return setEditState(!editState)
         }
     }
 
     const deleteList = async (itemID: string) => {
-        await axios.delete(`/api/deleteexpense/${itemID}`)
+        const {data} = await axios.delete(`/api/deleteexpense/${itemID}`)
+
+        if (data.status === "ok") {
+            refreshData()
+            return notifyDeleted()
+        }
     }
 
     const toggleModal: MouseEventHandler = (e: MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
-        setModalState(!modalState)
+        setCreateState(!createState)
+    }
+
+    const toggleEditModal = (itemID: string) => {
+        setSelectedItem(itemID)
+        const toBeEdited = items.filter(item => item.itemID === itemID)
+        setSelectedDetails({
+            description: toBeEdited[0].description,
+            amount: toBeEdited[0].amount
+        })
+        setEditState(!editState)
+    }
+
+    const refreshData = () => {
+        router.replace(router.asPath);
     }
 
     return (
@@ -117,7 +192,7 @@ const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number}> = ({
                 </div>
 
                 <div className={styles.itemsbox}>
-                    {items.map(item => {
+                    { items.length > 0 ? items.map(item => {
                         return <div className={styles.items} key={item.itemID}>
                             <div className={styles.item} >
                                 <div className={styles.details}>
@@ -126,17 +201,18 @@ const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number}> = ({
                                 </div>
 
                                 <div className={styles.btns}>
-                                    <button id={styles.edit}> Edit </button>
+                                    <button onClick={() => toggleEditModal(item.itemID)} id={styles.edit}> Edit </button>
                                     <button onClick={() => {
                                         deleteList(item.itemID)
                                     }} id={styles.delete}> Delete </button>
                                 </div>
                             </div>
                         </div>
-                    })}
+                    }) : <h3 className={styles.noitems}> Add Items. </h3> }
                 </div>
 
-                { modalState ? <ModalForm toggleModal={toggleModal} >
+                {/* Create Modal */}
+                { createState ? <ModalForm toggleModal={toggleModal} >
                     <div className={styles.rootform}>
                         <form onSubmit={submitForm} method="post">
                             <h1> Add expense </h1>
@@ -150,42 +226,36 @@ const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number}> = ({
                     </div>
                 </ModalForm> : null }
 
+                {/* Edit Modal */}
+
+                { editState ? <ModalForm toggleModal={setEditState} >
+                    <div className={styles.rootform}>
+                        <form onSubmit={submitEdit} method="post">
+                            <h1> Edit expense </h1>
+                            <input type="text" placeholder="Description" value={selectedDetails.description} onChange={handleChange2} name="description"/>
+                            <input type="text" placeholder="Amount" value={selectedDetails.amount} onChange={handleChange2} name="amount"/>
+                            <div className={styles.groupbtns}>
+                                <button type="submit"> Confirm </button>
+                                <button className={styles.cancel} onClick={() => setEditState(!editState)}> Cancel </button>
+                            </div>
+                        </form>
+                    </div>
+                </ModalForm> : "" }
+
+                {/* Toast Notification */}
+                <ToastContainer position="bottom-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover />
+
             </main>
         </div>
     )
 }
 
 export default Home
-
-
-// SELECT first_name, last_name, description, amount
-// FROM users
-// JOIN list ON list.userID = users.uniq_id;
-
-// import type { NextApiRequest, NextApiResponse } from 'next'
-// import mysql from 'mysql'
-
-// const db = mysql.createConnection({
-//     host: 'localhost',
-//     user: 'root',
-//     password: 'samsungj2prime',
-//     database: 'moneytrack_db'
-// })
-
-// db.connect()
-
-// export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-
-//     const userID = req.query.userid
-
-//     try {
-
-//         if (req.method === 'GET') {
-//             return console.log(userID)
-//         }
-        
-//     } catch (err) {
-//         throw Error ('Please try again.')
-//     }
-
-// }

@@ -40,7 +40,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     })
                 }
 
-                console.log(result)
                 return res.status(201).json({
                     status: 'ok',
                     msg: 'Successfully added.'
