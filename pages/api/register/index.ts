@@ -1,16 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import mysql from 'mysql'
 import uniqid from 'uniqid'
 import {hash} from 'bcrypt'
-
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'samsungj2prime',
-    database: 'moneytrack_db'
-})
+import { db } from '../../../helpers/db'
 
 db.connect()
+
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 

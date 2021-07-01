@@ -1,9 +1,11 @@
-import {useState, ChangeEvent, FormEvent, useEffect} from 'react'
+import {useState, ChangeEvent, FormEvent} from 'react'
 import Head from 'next/head'
+import {GetServerSideProps, NextPage} from 'next'
 import Image from 'next/image'
 import axios from 'axios'
 import {useRouter} from 'next/router'
-import {useDispatch, useSelector} from 'react-redux'
+import {useDispatch} from 'react-redux'
+import { signIn, useSession } from 'next-auth/client'
 
 // Icons
 import { MdClose } from 'react-icons/md'
@@ -13,24 +15,18 @@ import styles from  './Login.module.scss'
 
 import moneyCalculatorImg from '../../public/Mar-Business_11.jpg'
 import { authorized, userLoggedIn } from '../../redux/actions/action'
-import { IrootState } from '../../interfaces/rootState'
 
-const Login = () => {
+const Login: NextPage = () => {
 
+    const [session, loading] = useSession()
+    console.log(session)
     const router = useRouter()
     const dispatch = useDispatch()
-    const isAuth = useSelector((state: IrootState) => state.auth)
     const [errors, setErrors] = useState([] as string[])
     const [login, setLogin] = useState({
         email: "" as string,
         password: "" as string
     })
-
-    useEffect(() => {
-        if (isAuth) {
-            router.push('/home')
-        }
-    },[isAuth,router])
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target
@@ -71,7 +67,7 @@ const Login = () => {
 
             <main className={styles.container} >
                 <div className={styles.loginform}>
-                    <form onSubmit={loginSubmit} method="post">
+                    <form method="post">
                         <h1> Login </h1>
 
                         <div>
@@ -86,8 +82,11 @@ const Login = () => {
 
                         <input type="email" placeholder="Email" onChange={handleChange} name="email"/>
                         <input type="password" placeholder="Password" onChange={handleChange} name="password"/>
-                        <button type="submit"> Login </button>
+                        <button onClick={loginSubmit}> Login </button>
+                    
                     </form>
+                    <button onClick={() => signIn("google", {callbackUrl: 'http://localhost:3000/login'})}> Sign In with Google </button>
+                    {/* <button onClick={() => signIn("github", {callbackUrl: 'http://localhost:3000/login'})}> Sign In with Github </button> */}
                 </div>
 
                 <div className={styles.loginimg}>

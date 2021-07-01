@@ -1,17 +1,14 @@
 import Head from 'next/head'
-import {useState, ChangeEvent, FormEvent, useEffect} from 'react'
+import {GetServerSideProps} from 'next'
+import {useState, ChangeEvent, FormEvent} from 'react'
 import axios from 'axios'
 import { MdClose } from 'react-icons/md'
 
 // Styles & Static Files
 import styles from './Register.module.scss'
-import { useSelector } from 'react-redux'
-import { IrootState } from '../../interfaces/rootState'
-import router from 'next/router'
 
 const Register = () => {
 
-    const isAuth = useSelector((state: IrootState) => state.auth)
     const [errors, setErrors] = useState([] as string[])
     const [register, setRegister] = useState({
         firstName: "" as string,
@@ -44,12 +41,6 @@ const Register = () => {
     const closeError = () => {
         setErrors([])
     }
-
-    useEffect(() => {
-        if (isAuth) {
-            router.push('/home')
-        }
-    })
 
     return (
         <div>

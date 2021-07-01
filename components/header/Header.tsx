@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import {useRouter} from 'next/router'
 import {useSelector, useDispatch} from 'react-redux'
+import {useSession, signOut} from 'next-auth/client'
 
 // Typescript Interfaces
 import { IrootState } from '../../interfaces/rootState'
@@ -11,6 +12,8 @@ import styles from './Header.module.scss'
 
 export const Header = () => {
 
+    const [session, loading] = useSession()
+    console.log(session)
     const router = useRouter()
     const dispatch = useDispatch()
     const isAuth = useSelector((state: IrootState) => state.auth)
@@ -18,11 +21,11 @@ export const Header = () => {
         router.push('/')
     }
 
-    const logout = () => {
+    const logout = async () => {
         document.cookie = `token=`
         dispatch(userLogout())
         dispatch(unauthorized())
-        router.replace('/login')
+        await router.push('/login')
     }
 
     return (
@@ -31,9 +34,9 @@ export const Header = () => {
                 <h1 onClick={toRoot} > MoneyTrack </h1>
             </div>
 
-            { isAuth ? <div className={styles.navlinks} >
+            { session || isAuth ? <div className={styles.navlinks} >
                 <Link href="/home"> Home </Link>
-                <p onClick={logout} > Logout </p>
+                <p onClick={() => session ? signOut() : logout() } > Logout </p>
             </div> : <div className={styles.navlinks} >
                 <Link href="/login" > Login </Link>
                 <Link href="/register" > Sign Up </Link>

@@ -1,16 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import mysql from 'mysql'
 import {compare} from 'bcrypt'
 import {sign} from 'jsonwebtoken'
+import { db } from '../../../helpers/db'
 
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'samsungj2prime',
-    database: 'moneytrack_db'
-})
-
-connection.connect()
+db.connect()
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   
@@ -27,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         })
       }
 
-      connection.query('SELECT * FROM `users` WHERE email = ?', email, async (err, result) => {
+      db.query('SELECT * FROM `users` WHERE email = ?', email, async (err, result) => {
 
         if (err) {
           throw Error ('Yawa')

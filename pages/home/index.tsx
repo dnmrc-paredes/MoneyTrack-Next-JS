@@ -11,6 +11,7 @@ import currency from 'country-to-currency'
 import getSymbolFromCurrency from 'currency-symbol-map'
 import {verify} from 'jsonwebtoken'
 import {useRouter} from 'next/router'
+import { getSession, useSession } from 'next-auth/client'
  
 // Styles & Static
 import { MdLibraryAdd } from 'react-icons/md'
@@ -26,45 +27,54 @@ import {Iitem} from '../../interfaces/item'
 import { IrootState } from '../../interfaces/rootState'
 
 export const getServerSideProps: GetServerSideProps = async ({req}) => {
-    
-    if (!req.cookies.token) {
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: false
-            }
-        }
-    }
-    
-    // Will find the country with ipv4
-    const geo = geoip.lookup(await publicIp.v4())
-    const country = geo?.country as string
-    // Converting the object of key value pairs to array of object with key value pair
-    const countryList = Object.entries(currency).map(([cty, value]) => ({cty, value}))
-    // Filter and return the match item into an array
-    const final = countryList.filter(item => {
-        return item.cty === country.toString()
-    })
-    const curr = final[0].value
-    // Convert the country currency to country symbol
-    const symbol = getSymbolFromCurrency(curr)
 
-    const verifiedToken = verify(req.cookies.token, 'secret') as {id: string, iat: number}
-    const {data} = await axios.get<{data: Iitem[]}>(`http://localhost:3000/api/home/${verifiedToken.id}`)
+    // if (!req.cookies.token) {
+    //     return {
+    //         redirect: {
+    //             destination: '/login',
+    //             permanent: false
+    //         }
+    //     }    
+    // }
 
-    const amounts = [] as number[]
-    data.data.map(item => {
-        amounts.push(item.amount)
-    })
-    const totalAmount = amounts.reduce((prev, curr) => {
-        return prev+curr
-    }, 0)
+    const session = await getSession({req})
+    console.log(session)
+    
+    // // Will find the country with ipv4
+    // const geo = geoip.lookup(await publicIp.v4())
+    // const country = geo?.country as string
+    // // Converting the object of key value pairs to array of object with key value pair
+    // const countryList = Object.entries(currency).map(([cty, value]) => ({cty, value}))
+    // // Filter and return the match item into an array
+    // const final = countryList.filter(item => {
+    //     return item.cty === country.toString()
+    // })
+    // const curr = final[0].value
+    // // Convert the country currency to country symbol
+    // const symbol = getSymbolFromCurrency(curr)
+
+    // const verifiedToken = verify(req.cookies.token, 'secret') as {id: string, iat: number}
+    // const {data} = await axios.get<{data: Iitem[]}>(`http://localhost:3000/api/home/${verifiedToken.id}`)
+
+    // const amounts = [] as number[]
+    // data.data.map(item => {
+    //     amounts.push(item.amount)
+    // })
+    // const totalAmount = amounts.reduce((prev, curr) => {
+    //     return prev+curr
+    // }, 0)
+
+    // return {
+    //     props: {
+    //         items: data.data,
+    //         symbol,
+    //         totalAmount
+    //     }
+    // }
 
     return {
         props: {
-            items: data.data,
-            symbol,
-            totalAmount
+            items: 'sdfsafsa'
         }
     }
 }
@@ -72,6 +82,9 @@ export const getServerSideProps: GetServerSideProps = async ({req}) => {
 const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number}> = ({items, symbol, totalAmount}) => {
 
     const router = useRouter()
+    const [session, loading] = useSession()
+    console.log(session)
+    const isAuth = useSelector((state: IrootState) => state.auth)
     const myID = useSelector((state: IrootState) => state.user.uniq_id)
     const [createState, setCreateState] = useState<boolean>(false)
     const [editState, setEditState] = useState<boolean>(false)
@@ -174,7 +187,7 @@ const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number}> = ({
     }
 
     const refreshData = () => {
-        router.replace(router.asPath);
+        router.replace(router.asPath)
     }
 
     return (
@@ -183,7 +196,7 @@ const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number}> = ({
                 <title> Home </title>
             </Head>
 
-            <main className={styles.main}>
+            {/* <main className={styles.main}>
                 <div className={styles.container} >
                     <div className={styles.addbtn}>
                         <p> Total: {symbol}{totalAmount} </p>
@@ -211,7 +224,6 @@ const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number}> = ({
                     }) : <h3 className={styles.noitems}> Add Items. </h3> }
                 </div>
 
-                {/* Create Modal */}
                 { createState ? <ModalForm toggleModal={toggleModal} >
                     <div className={styles.rootform}>
                         <form onSubmit={submitForm} method="post">
@@ -225,8 +237,6 @@ const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number}> = ({
                         </form>
                     </div>
                 </ModalForm> : null }
-
-                {/* Edit Modal */}
 
                 { editState ? <ModalForm toggleModal={setEditState} >
                     <div className={styles.rootform}>
@@ -242,7 +252,7 @@ const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number}> = ({
                     </div>
                 </ModalForm> : "" }
 
-                {/* Toast Notification */}
+                
                 <ToastContainer position="bottom-right"
                     autoClose={5000}
                     hideProgressBar={false}
@@ -253,7 +263,9 @@ const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number}> = ({
                     draggable
                     pauseOnHover />
 
-            </main>
+            </main> */}
+
+            { session || isAuth ? <h1> Auth </h1> : <h1> Not Auth </h1> }
         </div>
     )
 }

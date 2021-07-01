@@ -1,12 +1,5 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
-import mysql from 'mysql'
-
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'samsungj2prime',
-    database: 'moneytrack_db'
-})
+import { db } from '../../../helpers/db'
 
 db.connect()
 
