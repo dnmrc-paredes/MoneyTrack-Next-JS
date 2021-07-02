@@ -1,13 +1,35 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import {useRouter} from 'next/router'
-import {useState, useEffect} from 'react'
+import {useEffect} from 'react'
+import {GetServerSideProps} from 'next'
+import {getSession} from 'next-auth/client'
 
 // Styles & Static Files
 import styles from '../styles/Home.module.scss'
 import familySaving from '../public/fam-couple-saving.jpg'
 import { useSelector } from 'react-redux'
 import { IrootState } from '../interfaces/rootState'
+
+export const getServerSideProps: GetServerSideProps = async ({req}) => {
+
+  const session = await getSession({req})
+
+  if (session) {
+      return {
+          props: {},
+          redirect: {
+              destination: '/home',
+              permanent: false
+          }
+      }
+  }
+
+  return {
+      props: { session }
+  }
+
+}
 
 const Root = () => {
 

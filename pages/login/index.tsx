@@ -5,21 +5,40 @@ import Image from 'next/image'
 import axios from 'axios'
 import {useRouter} from 'next/router'
 import {useDispatch} from 'react-redux'
-import { signIn, useSession } from 'next-auth/client'
+import { signIn, getSession } from 'next-auth/client'
 
 // Icons
 import { MdClose } from 'react-icons/md'
 
+// Redux
+import { authorized, userLoggedIn } from '../../redux/actions/action'
+
 // Styles & Static Files
 import styles from  './Login.module.scss'
-
 import moneyCalculatorImg from '../../public/Mar-Business_11.jpg'
-import { authorized, userLoggedIn } from '../../redux/actions/action'
+
+export const getServerSideProps: GetServerSideProps = async ({req}) => {
+
+    const session = await getSession({req})
+
+    if (session) {
+        return {
+            props: {},
+            redirect: {
+                destination: '/home',
+                permanent: false
+            }
+        }
+    }
+
+    return {
+        props: { session }
+    }
+
+}
 
 const Login: NextPage = () => {
 
-    const [session, loading] = useSession()
-    console.log(session)
     const router = useRouter()
     const dispatch = useDispatch()
     const [errors, setErrors] = useState([] as string[])
@@ -67,7 +86,7 @@ const Login: NextPage = () => {
 
             <main className={styles.container} >
                 <div className={styles.loginform}>
-                    <form method="post">
+                    <form onSubmit={loginSubmit} method="post">
                         <h1> Login </h1>
 
                         <div>
@@ -82,11 +101,11 @@ const Login: NextPage = () => {
 
                         <input type="email" placeholder="Email" onChange={handleChange} name="email"/>
                         <input type="password" placeholder="Password" onChange={handleChange} name="password"/>
-                        <button onClick={loginSubmit}> Login </button>
+                        <button type="submit" > Login </button>
                     
                     </form>
                     <button onClick={() => signIn("google", {callbackUrl: 'http://localhost:3000/login'})}> Sign In with Google </button>
-                    {/* <button onClick={() => signIn("github", {callbackUrl: 'http://localhost:3000/login'})}> Sign In with Github </button> */}
+                    {/* <button onClick={() => signIn("facebook", {callbackUrl: 'http://localhost:3000/login'})}> Sign In with Facebook </button> */}
                 </div>
 
                 <div className={styles.loginimg}>

@@ -1,9 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import mysql from 'mysql'
 import {compare} from 'bcrypt'
 import {sign} from 'jsonwebtoken'
 import { db } from '../../../helpers/db'
 
-db.connect()
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'samsungj2prime',
+    database: 'moneytrack_db'
+})
+
+connection.connect()
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   
@@ -12,6 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
 
     if (req.method === 'POST') {
+      console.log(email, password)
       
       if (!email || !password) {
         res.json({
@@ -20,11 +29,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         })
       }
 
-      db.query('SELECT * FROM `users` WHERE email = ?', email, async (err, result) => {
+      connection.query('SELECT * FROM local_users WHERE email = ?', email, async (err, result) => {
 
         if (err) {
+          console.log(err)
           throw Error ('Yawa')
         }
+
+        console.log(result)
 
         if (result.length === 0) {
           return res.json({
@@ -39,6 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
           const token = sign({id: result[0].uniq_id}, 'secret')
 
+          db.end()
           return res.status(200).json({
             status: 'ok',
             msg: 'Successfully Logged In.',

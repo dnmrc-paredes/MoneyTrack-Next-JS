@@ -22,6 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     })
                 }
 
+                db.end()
                 return res.status(202).json({
                     status: 'ok',
                     msg: 'Edited Successfully.'

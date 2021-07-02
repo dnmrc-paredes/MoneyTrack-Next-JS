@@ -1,12 +1,13 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
-import mysql from 'mysql'
+// import mysql from 'mysql'
+import { db } from '../../../helpers/db'
 
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'samsungj2prime',
-    database: 'moneytrack_db'
-})
+// const db = mysql.createConnection({
+//     host: 'localhost',
+//     user: 'root',
+//     password: 'samsungj2prime',
+//     database: 'moneytrack_db'
+// })
 
 db.connect()
 
@@ -20,8 +21,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             db.query(`
                 SELECT description, amount, itemID
-                FROM users
-                JOIN list ON list.userID = users.uniq_id WHERE users.uniq_id = ?;
+                FROM local_users
+                JOIN list ON list.userID = local_users.uniq_id WHERE local_users.uniq_id = ?;
             `, [userID], (err, result) => {
 
                 if (err) {
@@ -31,6 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     })
                 }
 
+                // db.end()
                 return res.status(200).json({
                     status: 'ok',
                     msg: 'Retrieved Successfully',

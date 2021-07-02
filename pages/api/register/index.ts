@@ -5,7 +5,6 @@ import { db } from '../../../helpers/db'
 
 db.connect()
 
-
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const {firstName, lastName, email, password} = req.body as {firstName: string, lastName: string, email: string, password: string}
@@ -30,7 +29,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         const hashedPassword = await hash(password, 10)
 
-        db.query(`INSERT INTO users (uniq_id, first_name, last_name, email, password) VALUES (?, ?, ?, ?, ?)`, [uniqueID, firstName, lastName, email, hashedPassword], (err, result) => {
+        db.query(`INSERT INTO local_users (uniq_id, first_name, last_name, email, password) VALUES (?, ?, ?, ?, ?)`, [uniqueID, firstName, lastName, email, hashedPassword], (err, result) => {
 
             if (err) {
                 if (err.code === 'ER_DUP_ENTRY') {
@@ -42,6 +41,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 throw err
             }
 
+            db.end()
             return res.status(200).json({
                 status: 'ok',
                 msg: 'Successfully Created.'

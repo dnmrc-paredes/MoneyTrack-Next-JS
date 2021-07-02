@@ -11,14 +11,12 @@ import {Header} from '../components/header/Header'
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <NextAuthProvider session={pageProps.session} >
-      <div>
         <Provider store={store}>
           <PersistGate persistor={persistor}>
             <Header/>
             <Component {...pageProps}/>
           </PersistGate>
         </Provider>
-      </div>
     </NextAuthProvider>
   )
 }

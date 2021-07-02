@@ -2,10 +2,34 @@ import Head from 'next/head'
 import {GetServerSideProps} from 'next'
 import {useState, ChangeEvent, FormEvent} from 'react'
 import axios from 'axios'
+import {getSession} from 'next-auth/client'
+import router from 'next/router'
+
+// Icons
 import { MdClose } from 'react-icons/md'
 
-// Styles & Static Files
+// Styles & Static Files 
 import styles from './Register.module.scss'
+
+export const getServerSideProps: GetServerSideProps = async ({req}) => {
+
+    const session = await getSession({req})
+
+    if (session) {
+        return {
+            props: {},
+            redirect: {
+                destination: '/home',
+                permanent: false
+            }
+        }
+    }
+
+    return {
+        props: { session }
+    }
+
+}
 
 const Register = () => {
 
@@ -35,6 +59,8 @@ const Register = () => {
         if (data.status === 'fail') {
             return setErrors([data.msg])
         }
+
+        router.push('/login')
 
     }
 

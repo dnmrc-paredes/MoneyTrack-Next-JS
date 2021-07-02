@@ -12,8 +12,7 @@ import styles from './Header.module.scss'
 
 export const Header = () => {
 
-    const [session, loading] = useSession()
-    console.log(session)
+    const [session] = useSession()
     const router = useRouter()
     const dispatch = useDispatch()
     const isAuth = useSelector((state: IrootState) => state.auth)

@@ -7,3 +7,5 @@ export const db = mysql.createConnection({
     database: 'moneytrack_db'
 })
 
+
+
