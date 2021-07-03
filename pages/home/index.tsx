@@ -28,84 +28,92 @@ import { IrootState } from '../../interfaces/rootState'
 
 export const getServerSideProps: GetServerSideProps = async ({req}) => {
 
-    // db.connect()
+    const session = await getSession({req})
 
-    // if (!req.cookies.token) {
-    //     return {
-    //         redirect: {
-    //             destination: '/login',
-    //             permanent: false
-    //         }
-    //     }    
-    // }
-
-    // db.query(`SELECT * FROM users WHERE email = ?`, [session?.user?.email], (err, result) => {
-    //     if (err) {
-    //         return console.log(err)
-    //     }
-
-    //     else {
-    //         console.log(result)
-    //     }
-    // })
-
-    // const session = await getSession({req})
-
-    // if (!session || !req.cookies.token) {
-    //     return {
-    //         props: {},
-    //         redirect: {
-    //             destination: '/login',
-    //             permanent: false
-    //         }
-    //     }
-    // }
-    
-    // Will find the country with ipv4
-    const geo = geoip.lookup(await publicIp.v4())
-    const country = geo?.country as string
-    // Converting the object of key value pairs to array of object with key value pair
-    const countryList = Object.entries(currency).map(([cty, value]) => ({cty, value}))
-    // Filter and return the match item into an array
-    const final = countryList.filter(item => {
-        return item.cty === country.toString()
-    })
-    const curr = final[0].value
-    // Convert the country currency to country symbol
-    const symbol = getSymbolFromCurrency(curr)
-
-    const verifiedToken = verify(req.cookies.token, 'secret') as {id: string, iat: number}
-    const {data} = await axios.get<{data: Iitem[]}>(`http://localhost:3000/api/home/${verifiedToken.id}`)
-    // console.log(data)
-
-    const amounts = [] as number[]
-    data.data.map(item => {
-        amounts.push(item.amount)
-    })
-    const totalAmount = amounts.reduce((prev, curr) => {
-        return prev+curr
-    }, 0)
-
-    return {
-        props: {
-            items: data.data,
-            symbol,
-            totalAmount
+    if (!session && !req.cookies.token) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false
+            }
         }
     }
+    
+    if (session) {
 
-    // return {
-    //     props: {
-    //         items: 'sdfsafsa'
-    //     }
-    // }
+        // Will find the country with ipv4
+        const geo = geoip.lookup(await publicIp.v4())
+        const country = geo?.country as string
+        // Converting the object of key value pairs to array of object with key value pair
+        const countryList = Object.entries(currency).map(([cty, value]) => ({cty, value}))
+        // Filter and return the match item into an array
+        const final = countryList.filter(item => {
+            return item.cty === country.toString()
+        })
+        const curr = final[0].value
+        // Convert the country currency to country symbol
+        const symbol = getSymbolFromCurrency(curr)
+
+        const {data} = await axios.get<{data: Iitem[]}>(`http://localhost:3000/api/home/oauth/${session?.user?.email}`)
+
+        const amounts = [] as number[]
+        data.data.map(item => {
+            amounts.push(item.amount)
+        })
+        const totalAmount = amounts.reduce((prev, curr) => {
+            return prev+curr
+        }, 0)
+
+        return {
+            props: {
+                items: data.data,
+                symbol,
+                totalAmount,
+                userEmail: session.user?.email
+            }
+        }
+
+    } else {
+
+        // Will find the country with ipv4
+        const geo = geoip.lookup(await publicIp.v4())
+        const country = geo?.country as string
+        // Converting the object of key value pairs to array of object with key value pair
+        const countryList = Object.entries(currency).map(([cty, value]) => ({cty, value}))
+        // Filter and return the match item into an array
+        const final = countryList.filter(item => {
+            return item.cty === country.toString()
+        })
+        const curr = final[0].value
+        // Convert the country currency to country symbol
+        const symbol = getSymbolFromCurrency(curr)
+
+        const verifiedToken = verify(req.cookies.token, 'secret') as {id: string, iat: number}
+        const {data} = await axios.get<{data: Iitem[]}>(`http://localhost:3000/api/home/${verifiedToken.id}`)
+
+        const amounts = [] as number[]
+        data.data.map(item => {
+            amounts.push(item.amount)
+        })
+        const totalAmount = amounts.reduce((prev, curr) => {
+            return prev+curr
+        }, 0)
+
+        return {
+            props: {
+                items: data.data,
+                symbol,
+                totalAmount
+            }
+        }
+
+    }
+
 }
 
-const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number}> = ({items, symbol, totalAmount}) => {
+const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number, userEmail?: string}> = ({items, symbol, totalAmount, userEmail}) => {
 
     const router = useRouter()
-    const [session] = useSession()
-    const isAuth = useSelector((state: IrootState) => state.auth)
     const myID = useSelector((state: IrootState) => state.user.uniq_id)
     const [createState, setCreateState] = useState<boolean>(false)
     const [editState, setEditState] = useState<boolean>(false)
@@ -148,7 +156,7 @@ const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number}> = ({
 
     const submitForm: FormEventHandler = async (e) => {
         e.preventDefault()
-        const {data} = await axios.post(`/api/addexpense/${myID}`, details)
+        const {data} = userEmail ? await axios.post(`/api/addexpense/oauth/${userEmail}`, details) : await axios.post(`/api/addexpense/${myID}`, details)
 
         if (!details.description || !details.amount) {
             return notifyError()
@@ -167,7 +175,7 @@ const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number}> = ({
 
     const submitEdit: FormEventHandler = async (e) => {
         e.preventDefault()
-        const {data} = await axios.patch(`/api/editexpense/${selectedItem}`, selectedDetails)
+        const {data} = userEmail ? await axios.patch(`/api/editexpense/oauth/${selectedItem}`, selectedDetails) : await axios.patch(`/api/editexpense/${selectedItem}`, selectedDetails)
 
         if (!selectedDetails.description || !selectedDetails.amount) {
             return notifyError()
@@ -185,8 +193,8 @@ const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number}> = ({
     }
 
     const deleteList = async (itemID: string) => {
-        const {data} = await axios.delete(`/api/deleteexpense/${itemID}`)
-        console.log(data)
+        const {data} = userEmail ? await axios.delete(`/api/deleteexpense/oauth/${itemID}`) : await axios.delete(`/api/deleteexpense/${itemID}`)
+        // console.log(data)
         if (data.status === "ok") {
             refreshData()
             return notifyDeleted()

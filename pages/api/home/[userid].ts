@@ -1,19 +1,39 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
+import { getSession } from 'next-auth/client'
 // import mysql from 'mysql'
 import { db } from '../../../helpers/db'
 
-// const db = mysql.createConnection({
+// // const db = mysql.createConnection({
+// //     host: 'localhost',
+// //     user: 'root',
+// //     password: 'samsungj2prime',
+// //     database: 'moneytrack_db'
+// // })
+
+// db.connect()
+
+// import mysql from 'mysql'
+
+// export const db = mysql.createConnection({
 //     host: 'localhost',
 //     user: 'root',
 //     password: 'samsungj2prime',
 //     database: 'moneytrack_db'
 // })
 
-db.connect()
+
+db.connect((err) => {
+    if (err) {
+        return console.log(err)
+    }
+
+    console.log('connected')
+})
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const userID = req.query.userid
+    // const session = await getSession({req})
 
     try {
 
@@ -22,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             db.query(`
                 SELECT description, amount, itemID
                 FROM local_users
-                JOIN list ON list.userID = local_users.uniq_id WHERE local_users.uniq_id = ?;
+                JOIN local_list ON local_list.userID = local_users.uniq_id WHERE local_users.uniq_id = ?;
             `, [userID], (err, result) => {
 
                 if (err) {

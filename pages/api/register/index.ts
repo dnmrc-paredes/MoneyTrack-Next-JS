@@ -3,7 +3,25 @@ import uniqid from 'uniqid'
 import {hash} from 'bcrypt'
 import { db } from '../../../helpers/db'
 
-db.connect()
+// db.connect()
+
+// import mysql from 'mysql'
+
+// export const db = mysql.createConnection({
+//     host: 'localhost',
+//     user: 'root',
+//     password: 'samsungj2prime',
+//     database: 'moneytrack_db'
+// })
+
+
+db.connect((err) => {
+    if (err) {
+        return console.log(err)
+    }
+
+    console.log('connected')
+})
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
@@ -41,7 +59,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 throw err
             }
 
-            db.end()
+            // db.end()
             return res.status(200).json({
                 status: 'ok',
                 msg: 'Successfully Created.'

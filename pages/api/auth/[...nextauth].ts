@@ -6,6 +6,10 @@ export default NextAuth({
         Providers.Google({
             clientId: process.env.GOOGLE_ID,
             clientSecret: process.env.GOOGLE_SECRET
+        }),
+        Providers.Facebook({
+            clientId: process.env.FB_ID,
+            clientSecret: process.env.FB_SECRET
         })
     ],
     database: {

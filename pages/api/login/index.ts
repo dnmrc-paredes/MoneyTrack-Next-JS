@@ -1,18 +1,35 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import mysql from 'mysql'
+// import mysql from 'mysql'
 import {compare} from 'bcrypt'
 import {sign} from 'jsonwebtoken'
 import { db } from '../../../helpers/db'
 
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'samsungj2prime',
-    database: 'moneytrack_db'
+// const connection = mysql.createConnection({
+//     host: 'localhost',
+//     user: 'root',
+//     password: 'samsungj2prime',
+//     database: 'moneytrack_db'
+// })
+
+// connection.connect()
+
+// import mysql from 'mysql'
+
+// export const db = mysql.createConnection({
+//     host: 'localhost',
+//     user: 'root',
+//     password: 'samsungj2prime',
+//     database: 'moneytrack_db'
+// })
+
+
+db.connect((err) => {
+  if (err) {
+      return console.log(err)
+  }
+
+  console.log('connected')
 })
-
-connection.connect()
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   
   const {email, password} = req.body as {email: string, password: string}
@@ -29,7 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         })
       }
 
-      connection.query('SELECT * FROM local_users WHERE email = ?', email, async (err, result) => {
+      db.query('SELECT * FROM local_users WHERE email = ?', email, async (err, result) => {
 
         if (err) {
           console.log(err)
@@ -51,7 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
           const token = sign({id: result[0].uniq_id}, 'secret')
 
-          db.end()
+          // db.end()
           return res.status(200).json({
             status: 'ok',
             msg: 'Successfully Logged In.',

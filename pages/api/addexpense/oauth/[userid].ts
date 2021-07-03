@@ -1,6 +1,6 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import uniqid from 'uniqid'
-import { db } from '../../../helpers/db'
+import { db } from '../../../../helpers/db'
 // import mysql from 'mysql'
 
 // export const db = mysql.createConnection({
@@ -21,7 +21,7 @@ db.connect((err) => {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse){
     
-    const userID = req.query.userid
+    const userEmail = req.query.userid
     const {description, amount} = req.body as {description: string, amount: string}
     const convertedAmount = parseInt(amount)
 
@@ -38,8 +38,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 })
             }
 
-            db.query(`INSERT INTO local_list (itemID, userID, description, amount) VALUES (?, ?, ?, ?)`, 
-            [itemID, userID, description, convertedAmount], (err, result) => {
+            db.query(`INSERT INTO list (itemID, email, description, amount) VALUES (?, ?, ?, ?)`, 
+            [itemID, userEmail, description, convertedAmount], (err, result) => {
 
                 if (err) {
                     return res.json({

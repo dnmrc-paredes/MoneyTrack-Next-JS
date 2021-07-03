@@ -1,5 +1,5 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
-import { db } from '../../../helpers/db'
+import { db } from '../../../../helpers/db'
 
 // db.connect()
 
@@ -29,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (req.method === "DELETE") [
 
-            db.query(`DELETE FROM local_list WHERE itemID = ?`, [itemID], (err, result) => {
+            db.query(`DELETE FROM list WHERE itemID = ?`, [itemID], (err, result) => {
 
                 if (err) {
                     return res.json({

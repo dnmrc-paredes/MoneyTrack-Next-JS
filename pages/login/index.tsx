@@ -9,6 +9,7 @@ import { signIn, getSession } from 'next-auth/client'
 
 // Icons
 import { MdClose } from 'react-icons/md'
+import { FaGoogle } from 'react-icons/fa'
 
 // Redux
 import { authorized, userLoggedIn } from '../../redux/actions/action'
@@ -21,7 +22,7 @@ export const getServerSideProps: GetServerSideProps = async ({req}) => {
 
     const session = await getSession({req})
 
-    if (session) {
+    if (session || req.cookies.token) {
         return {
             props: {},
             redirect: {
@@ -86,7 +87,7 @@ const Login: NextPage = () => {
 
             <main className={styles.container} >
                 <div className={styles.loginform}>
-                    <form onSubmit={loginSubmit} method="post">
+                    <div id={styles.form}>
                         <h1> Login </h1>
 
                         <div>
@@ -101,11 +102,12 @@ const Login: NextPage = () => {
 
                         <input type="email" placeholder="Email" onChange={handleChange} name="email"/>
                         <input type="password" placeholder="Password" onChange={handleChange} name="password"/>
-                        <button type="submit" > Login </button>
+                        <button onClick={loginSubmit} > Login </button>
+                        <button className={styles.google} onClick={() => signIn("google", {callbackUrl: 'http://localhost:3000/login'})}> Sign In with <FaGoogle style={{marginLeft: '0.2rem'}} /> </button>   
                     
-                    </form>
-                    <button onClick={() => signIn("google", {callbackUrl: 'http://localhost:3000/login'})}> Sign In with Google </button>
-                    {/* <button onClick={() => signIn("facebook", {callbackUrl: 'http://localhost:3000/login'})}> Sign In with Facebook </button> */}
+                    </div>
+                    {/* <button onClick={() => signIn("google", {callbackUrl: 'http://localhost:3000/login'})}> Sign In with Google </button> */}
+                    {/* <button onClick={() => signIn("facebook")}> Sign In with Facebook </button> */}
                 </div>
 
                 <div className={styles.loginimg}>

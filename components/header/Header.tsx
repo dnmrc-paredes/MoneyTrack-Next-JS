@@ -27,6 +27,13 @@ export const Header = () => {
         await router.push('/login')
     }
 
+    const logoutOauth = async () => {
+        signOut()
+        dispatch(userLogout())
+        dispatch(unauthorized())
+        await router.push('/login')
+    }
+
     return (
         <nav className={styles.navbar} >
             <div className={styles.navlogo}>
@@ -35,7 +42,7 @@ export const Header = () => {
 
             { session || isAuth ? <div className={styles.navlinks} >
                 <Link href="/home"> Home </Link>
-                <p onClick={() => session ? signOut() : logout() } > Logout </p>
+                <p onClick={() => session ? logoutOauth() : logout() } > Logout </p>
             </div> : <div className={styles.navlinks} >
                 <Link href="/login" > Login </Link>
                 <Link href="/register" > Sign Up </Link>

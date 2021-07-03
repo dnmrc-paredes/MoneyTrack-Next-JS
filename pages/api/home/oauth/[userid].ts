@@ -1,5 +1,14 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
-import { db } from '../../../helpers/db'
+// import { getSession } from 'next-auth/client'
+// import mysql from 'mysql'
+import { db } from '../../../../helpers/db'
+
+// // const db = mysql.createConnection({
+// //     host: 'localhost',
+// //     user: 'root',
+// //     password: 'samsungj2prime',
+// //     database: 'moneytrack_db'
+// // })
 
 // db.connect()
 
@@ -23,13 +32,18 @@ db.connect((err) => {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
-    const itemID = req.query.itemid
+    const userEmail = req.query.userid
+    // const session = await getSession({req})
 
     try {
 
-        if (req.method === "DELETE") [
+        if (req.method === "GET") {
 
-            db.query(`DELETE FROM local_list WHERE itemID = ?`, [itemID], (err, result) => {
+            db.query(`
+                SELECT description, amount, itemID
+                FROM users
+                JOIN list ON list.email = users.email WHERE users.email = ?;
+            `, [userEmail], (err, result) => {
 
                 if (err) {
                     return res.json({
@@ -39,14 +53,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
 
                 // db.end()
-                return res.status(202).json({
+                return res.status(200).json({
                     status: 'ok',
-                    msg: 'Deleted Successfully.'
+                    msg: 'Retrieved Successfully',
+                    data: result
                 })
 
             })
-
-        ]
+            
+        }
         
     } catch (err) {
         throw Error ('Please try again.')

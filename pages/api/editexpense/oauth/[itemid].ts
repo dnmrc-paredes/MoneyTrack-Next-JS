@@ -1,5 +1,5 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
-import { db } from '../../../helpers/db'
+import { db } from '../../../../helpers/db'
 
 // db.connect()
 
@@ -24,12 +24,14 @@ db.connect((err) => {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const itemID = req.query.itemid
+    const {description, amount} = req.body as {description: string, amount: string}
+    const convertedAmount = parseInt(amount)
 
     try {
 
-        if (req.method === "DELETE") [
+        if (req.method === "PATCH") [
 
-            db.query(`DELETE FROM local_list WHERE itemID = ?`, [itemID], (err, result) => {
+            db.query(`UPDATE list SET description = ?, amount = ? WHERE itemID = ?`, [description, convertedAmount, itemID], (err, result) => {
 
                 if (err) {
                     return res.json({
@@ -41,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 // db.end()
                 return res.status(202).json({
                     status: 'ok',
-                    msg: 'Deleted Successfully.'
+                    msg: 'Edited Successfully.'
                 })
 
             })
