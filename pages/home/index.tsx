@@ -11,7 +11,7 @@ import currency from 'country-to-currency'
 import getSymbolFromCurrency from 'currency-symbol-map'
 import {verify} from 'jsonwebtoken'
 import {useRouter} from 'next/router'
-import { getSession, useSession } from 'next-auth/client'
+import { getSession } from 'next-auth/client'
  
 // Styles & Static
 import { MdLibraryAdd } from 'react-icons/md'
@@ -236,21 +236,19 @@ const Home: NextPage<{items: Iitem[], symbol: string, totalAmount: number, userE
 
                 <div className={styles.itemsbox}>
                     { items.length > 0 ? items.map(item => {
-                        return <div className={styles.items} key={item.itemID}>
-                            <div className={styles.item} >
-                                <div className={styles.details}>
-                                    <h3> {item.description} </h3>
-                                    <p> {symbol}{item.amount} </p>
-                                </div>
+                        return <div className={styles.item} key={item.itemID} >
+                                    <div className={styles.details}>
+                                        <h3> {item.description} </h3>
+                                        <p> {symbol}{item.amount} </p>
 
-                                <div className={styles.btns}>
-                                    <button onClick={() => toggleEditModal(item.itemID)} id={styles.edit}> Edit </button>
-                                    <button onClick={() => {
-                                        deleteList(item.itemID)
-                                    }} id={styles.delete}> Delete </button>
+                                        <div className={styles.btns}>
+                                            <button onClick={() => toggleEditModal(item.itemID)} id={styles.edit}> Edit </button>
+                                            <button onClick={() => {
+                                                deleteList(item.itemID)
+                                            }} id={styles.delete}> Delete </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
                     }) : <h3 className={styles.noitems}> Add Items. </h3> }
                 </div>
 

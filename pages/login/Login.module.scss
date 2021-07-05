@@ -73,8 +73,12 @@
 .loginimg {
     flex: 2;
     background-image: url('../../public/Mar-Business_11.jpg');
-    display: flex;
-    justify-content: center;
+    // display: flex;
+    margin: auto;
+    // justify-content: center;
+    img {
+        width: 100%;
+    }
 }
 
 .alert {
@@ -94,58 +98,36 @@
 
 }
 
-.transition {
-    background-color: rgba(255, 0, 0, 0.178);
-    padding: 0.5rem;
-
-    .fade-appear {
-        opacity: 0;
-        transform: scale(0.9);
-        background-color: red;
-    }
+@media screen and (max-width: 900px) {
     
-    .fade-appear-active {
-        opacity: 1;
-        transform: translateX(0);
-        transition: opacity 300ms, transform 300ms;
-        background-color: blue;
-    }
-      
-    .fade-exit {
-        opacity: 1;
-        background-color: yellow;
-    }
-      
-    .fade-exit-active {
-        opacity: 0;
-        transform: scale(0.9);
-        transition: opacity 300ms, transform 300ms;
-        background-color: green;
+    .loginform {
+
+        #form {
+            width: 280px;
+            margin: 3rem 1rem;
+        }
+
     }
 
 }
 
-.fade-appear {
-    opacity: 0;
-    transform: scale(0.9);
-    // background-color: red;
+@media screen and (max-width: 650px) {
+
+    .container {
+        flex-direction: column;
+    }
+
 }
 
-.fade-appear-active {
-    opacity: 1;
-    transform: translateX(0);
-    transition: opacity 300ms, transform 300ms;
-    // background-color: blue;
-}
-  
-.fade-exit {
-    opacity: 1;
-    // background-color: yellow;
-}
-  
-.fade-exit-active {
-    opacity: 0;
-    transform: scale(0.9);
-    transition: opacity 300ms, transform 300ms;
-    // background-color: green;
+@media screen and (max-width: 400px) {
+    
+    .loginform {
+
+        #form {
+            width: 100%;
+            margin: 3rem 0rem;
+        }
+
+    }
+
 }

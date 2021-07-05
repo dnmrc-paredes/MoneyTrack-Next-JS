@@ -6,6 +6,3 @@ export const db = mysql.createConnection({
     password: 'samsungj2prime',
     database: 'moneytrack_db'
 })
-
-
-

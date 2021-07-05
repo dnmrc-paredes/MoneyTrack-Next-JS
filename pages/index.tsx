@@ -50,7 +50,13 @@ const Root = () => {
     <div className={styles.container} >
       <Head>
         <title> MoneyTrack - A platform to track you expenses. </title>
+        <meta charSet="utf-8"/>
         <meta name="description" content="A platform to track you expenses." />
+        <meta name="keywords" content="moneytrack, moneytrack, money, track, track expenses, money tracker" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://image.freepik.com/free-vector/dollars-illustration-set_74855-4404.jpg" />
+        <meta property="og:title" content="MoneyTrack - A platform to track you expenses." />
+        <meta property="og:description" content="A platform to track you expenses." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

@@ -37,7 +37,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
 
     if (req.method === 'POST') {
-      console.log(email, password)
       
       if (!email || !password) {
         res.json({
@@ -52,8 +51,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           console.log(err)
           throw Error ('Yawa')
         }
-
-        console.log(result)
 
         if (result.length === 0) {
           return res.json({

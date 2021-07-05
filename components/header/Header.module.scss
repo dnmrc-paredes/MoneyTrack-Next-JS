@@ -45,3 +45,58 @@
     }
 
 }
+
+.menu {
+    position: relative;
+
+    .cursor {
+        cursor: pointer;
+    }
+
+    .menulinks {
+        background-color: whitesmoke;
+        border-radius: 5px;
+        width: 130px;
+        padding: 1rem;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        // padding: 0.5rem 1.3rem;
+        position: absolute;
+        right: 5px;
+
+        ul {
+
+            li {
+                cursor: pointer;
+                list-style: none;
+                margin: 0.5rem 0;
+                font-family: $small-font;
+                font-size: 0.9rem;
+            }
+        }
+
+    }
+}
+
+@media screen and (max-width: 600px) {
+
+    nav.navbar {
+        flex-direction: column;
+
+        .menulinks {
+            left: 0px;
+        }
+
+        .navlogo {
+            justify-content: center;
+        }
+
+        .navlinks {
+            justify-content: center;
+        }
+    }
+
+}

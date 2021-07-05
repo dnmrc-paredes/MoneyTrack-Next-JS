@@ -72,7 +72,13 @@ const Register = () => {
         <div>
             <Head>
                 <title> MoneyTrack | Register </title>
+                <meta charSet="utf-8"/>
                 <meta name="description" content="Sign up for an account today." />
+                <meta name="keywords" content="register moneytrack, register moneytrack, money, track, track expenses, money tracker" />
+                <meta property="og:type" content="website" />
+                <meta property="og:image" content="https://image.freepik.com/free-vector/dollars-illustration-set_74855-4404.jpg" />
+                <meta property="og:title" content="Register to MoneyTrack." />
+                <meta property="og:description" content="Register to MoneyTrack - A platform to track you expenses." />
             </Head>
 
             <main className={styles.container} >

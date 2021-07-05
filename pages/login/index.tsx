@@ -82,7 +82,13 @@ const Login: NextPage = () => {
         <div>
             <Head>
                 <title> MoneyTrack | Login </title>
+                <meta charSet="utf-8"/>
                 <meta name="description" content="Login to your account." />
+                <meta name="keywords" content="login moneytrack, login moneytrack, money, track, track expenses, money tracker" />
+                <meta property="og:type" content="website" />
+                <meta property="og:image" content="https://image.freepik.com/free-vector/dollars-illustration-set_74855-4404.jpg" />
+                <meta property="og:title" content="Login to MoneyTrack." />
+                <meta property="og:description" content="Login to MoneyTrack - A platform to track you expenses." />
             </Head>
 
             <main className={styles.container} >
@@ -103,7 +109,7 @@ const Login: NextPage = () => {
                         <input type="email" placeholder="Email" onChange={handleChange} name="email"/>
                         <input type="password" placeholder="Password" onChange={handleChange} name="password"/>
                         <button onClick={loginSubmit} > Login </button>
-                        <button className={styles.google} onClick={() => signIn("google", {callbackUrl: 'http://localhost:3000/login'})}> Sign In with <FaGoogle style={{marginLeft: '0.2rem'}} /> </button>   
+                        <button className={styles.google} onClick={() => signIn("google", {callbackUrl: 'http://localhost:3000/login'})}> Sign In with Google <FaGoogle style={{marginLeft: '0.2rem'}} /> </button>   
                     
                     </div>
                     {/* <button onClick={() => signIn("google", {callbackUrl: 'http://localhost:3000/login'})}> Sign In with Google </button> */}
